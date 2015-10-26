@@ -1,6 +1,7 @@
 package mx.aidc;
 
 import com.github.jreddit.entity.Submission;
+import com.mashape.unirest.http.Unirest;
 
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +18,8 @@ public class Main {
             return;
         }
 
-        List<Submission> submissionsUser = data.getTop100();
+        List<Submission> submissionsUser;
+        submissionsUser = data.getSubmissions(null);
 
         if(submissionsUser == null){
             System.out.println("Error target");
@@ -25,14 +27,25 @@ public class Main {
         }
 
         System.out.println("Reading submissions...");
+        Submission last = null;
 
-        for(Iterator iterator = submissionsUser.iterator(); iterator.hasNext();){
+        while(submissionsUser.size() > 0){
 
-            Submission sub = (Submission)iterator.next();
-            String url = sub.getURL();
-            System.out.println(sub.getTitle()+" - "+url);
+            for(Iterator iterator = submissionsUser.iterator(); iterator.hasNext();){
+
+                Submission sub = (Submission)iterator.next();
+                data.processSubmission(sub);
+                last = sub;
+            }
+
+            submissionsUser = data.getSubmissions(last);
 
         }
 
+        try {
+            Unirest.shutdown();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

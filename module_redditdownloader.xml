@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_redditdownloader" default="compile.module.redditdownloader">
+  <dirname property="module.redditdownloader.basedir" file="${ant.file.module_redditdownloader}"/>
+  
+  <property name="module.jdk.home.redditdownloader" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.redditdownloader" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.redditdownloader" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.redditdownloader" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
+  
+  <property name="redditdownloader.output.dir" value="${module.redditdownloader.basedir}/out/production/RedditDownloader"/>
+  <property name="redditdownloader.testoutput.dir" value="${module.redditdownloader.basedir}/out/test/RedditDownloader"/>
+  
+  <path id="redditdownloader.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="redditdownloader.module.production.classpath">
+    <path refid="${module.jdk.classpath.redditdownloader}"/>
+    <path refid="library.com.mashape.unirest:unirest-java:1.4.5.classpath"/>
+    <path refid="library.com.github.jreddit:jreddit:1.0.2.classpath"/>
+  </path>
+  
+  <path id="redditdownloader.runtime.production.module.classpath">
+    <pathelement location="${redditdownloader.output.dir}"/>
+    <path refid="library.com.mashape.unirest:unirest-java:1.4.5.classpath"/>
+    <path refid="library.com.github.jreddit:jreddit:1.0.2.classpath"/>
+  </path>
+  
+  <path id="redditdownloader.module.classpath">
+    <path refid="${module.jdk.classpath.redditdownloader}"/>
+    <pathelement location="${redditdownloader.output.dir}"/>
+    <path refid="library.com.mashape.unirest:unirest-java:1.4.5.classpath"/>
+    <path refid="library.com.github.jreddit:jreddit:1.0.2.classpath"/>
+  </path>
+  
+  <path id="redditdownloader.runtime.module.classpath">
+    <pathelement location="${redditdownloader.testoutput.dir}"/>
+    <pathelement location="${redditdownloader.output.dir}"/>
+    <path refid="library.com.mashape.unirest:unirest-java:1.4.5.classpath"/>
+    <path refid="library.com.github.jreddit:jreddit:1.0.2.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.redditdownloader">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.redditdownloader">
+    <patternset refid="excluded.from.module.redditdownloader"/>
+  </patternset>
+  
+  <path id="redditdownloader.module.sourcepath">
+    <dirset dir="${module.redditdownloader.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.redditdownloader" depends="compile.module.redditdownloader.production,compile.module.redditdownloader.tests" description="Compile module RedditDownloader"/>
+  
+  <target name="compile.module.redditdownloader.production" depends="register.custom.compilers" description="Compile module RedditDownloader; production classes">
+    <mkdir dir="${redditdownloader.output.dir}"/>
+    <javac2 destdir="${redditdownloader.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redditdownloader}/javac">
+      <compilerarg line="${compiler.args.redditdownloader}"/>
+      <bootclasspath refid="redditdownloader.module.bootclasspath"/>
+      <classpath refid="redditdownloader.module.production.classpath"/>
+      <src refid="redditdownloader.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.redditdownloader"/>
+    </javac2>
+    
+    <copy todir="${redditdownloader.output.dir}">
+      <fileset dir="${module.redditdownloader.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.redditdownloader.tests" depends="register.custom.compilers,compile.module.redditdownloader.production" description="compile module RedditDownloader; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.redditdownloader" description="cleanup module">
+    <delete dir="${redditdownloader.output.dir}"/>
+    <delete dir="${redditdownloader.testoutput.dir}"/>
+  </target>
+</project>
