@@ -162,6 +162,9 @@ public class SessionData {
             jsonResponse = Unirest.get(target)
                     .asJson();
 
+            if(!jsonResponse.getBody().getObject().has("gfyItem"))
+                return;
+
             JSONObject response = jsonResponse.getBody().getObject().getJSONObject("gfyItem");
 
             if(response.has("error")) {
@@ -251,6 +254,9 @@ public class SessionData {
                 System.out.println(response.getString("error"));
                 return;
             }
+
+            if(!response.has("id"))
+                return;
 
             dirTemp = dirTemp + "/" + response.getString("id");
             System.out.println("Creating dir... "+dirTemp);
